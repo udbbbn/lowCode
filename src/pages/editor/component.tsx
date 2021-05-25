@@ -1,11 +1,10 @@
 import { SelectProps, Input, Radio, Checkbox, Select } from 'antd';
-import { HTMLAttributes, ReactNode } from 'react';
-import styles from './index.less';
+import { HTMLAttributes } from 'react';
 
 const { TextArea } = Input;
 const { Option } = Select;
 
-interface Template {
+export interface Template {
   id?: string;
   type: Type;
   label: string;
@@ -17,6 +16,10 @@ interface Template {
 export type Type = 'text' | 'radio' | 'checkbox' | 'textarea' | 'select';
 type Value = string | number;
 type DefaultValue = HTMLAttributes<unknown>['defaultValue'];
+
+interface TempProps extends Template {
+  onFocus: (item: FormData, idx: number) => void;
+}
 
 const template: Template[] = [
   {
@@ -62,79 +65,62 @@ const template: Template[] = [
   },
 ];
 
-const ItemBox = (props: { label: string; children: ReactNode }) => (
-  <div className={styles.template__wrapper}>
-    <span className={styles.label}>{props.label}:</span>
-    {props.children}
-  </div>
-);
-
 const tempMap: {
   [key in Type]?: {
     component: (props: any) => JSX.Element;
   };
 } = {
   text: {
-    component: ({ label, placeholder, value }: Template) => (
-      <ItemBox label={label}>
-        <Input
-          placeholder={placeholder}
-          defaultValue={value as DefaultValue}
-        ></Input>
-      </ItemBox>
+    component: ({ placeholder, value }: TempProps) => (
+      <Input
+        placeholder={placeholder}
+        defaultValue={value as DefaultValue}
+      ></Input>
     ),
   },
   radio: {
-    component: ({ label, value, options }: Template) => (
-      <ItemBox label={label}>
-        <Radio.Group defaultValue={value}>
-          {options!.map((item) => (
-            <Radio key={item.label} value={item.value}>
-              {item.label}
-            </Radio>
-          ))}
-        </Radio.Group>
-      </ItemBox>
+    component: ({ value, options }: TempProps) => (
+      <Radio.Group defaultValue={value}>
+        {options!.map((item) => (
+          <Radio key={item.label} value={item.value}>
+            {item.label}
+          </Radio>
+        ))}
+      </Radio.Group>
     ),
   },
   checkbox: {
-    component: ({ label, value, options }: Template) => (
-      <ItemBox label={label}>
-        <Checkbox.Group>
-          {options!.map((item) => (
-            <Checkbox
-              key={item.label}
-              value={item.value}
-              defaultChecked={(value as Value[]).includes(item.value)}
-            >
-              {item.label}
-            </Checkbox>
-          ))}
-        </Checkbox.Group>
-      </ItemBox>
+    component: ({ value, options }: TempProps) => (
+      <Checkbox.Group>
+        {options!.map((item) => (
+          <Checkbox
+            key={item.label}
+            value={item.value}
+            defaultChecked={(value as Value[]).includes(item.value)}
+          >
+            {item.label}
+          </Checkbox>
+        ))}
+      </Checkbox.Group>
     ),
   },
   textarea: {
-    component: ({ label, value, placeholder }: Template) => (
-      <ItemBox label={label}>
-        <TextArea
-          placeholder={placeholder}
-          defaultValue={value as Value}
-        ></TextArea>
-      </ItemBox>
+    component: ({ value, placeholder }: TempProps) => (
+      <TextArea
+        placeholder={placeholder}
+        defaultValue={value as Value}
+      ></TextArea>
     ),
   },
   select: {
-    component: ({ label, value, options, placeholder }: Template) => (
-      <ItemBox label={label}>
-        <Select placeholder={placeholder} defaultValue={value}>
-          {options!.map((item) => (
-            <Option key={item.label} value={item.value}>
-              {item.label}
-            </Option>
-          ))}
-        </Select>
-      </ItemBox>
+    component: ({ value, options, placeholder }: TempProps) => (
+      <Select placeholder={placeholder} defaultValue={value}>
+        {options!.map((item) => (
+          <Option key={item.label} value={item.value}>
+            {item.label}
+          </Option>
+        ))}
+      </Select>
     ),
   },
 };

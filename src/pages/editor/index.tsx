@@ -1,14 +1,15 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Drawer } from 'antd';
 import Layout from '@/layout';
 import { v4 as uuidv4 } from 'uuid';
-import Base, { FormData } from './base';
+import Base, { ItemBox } from './base';
 import styles from './index.less';
-import { template } from './component';
+import { template, Template, tempMap } from './component';
 
 export default function IndexPage() {
-  const [formData, setFormData] = useState<FormData[]>([]);
+  const [formData, setFormData] = useState<Template[]>([]);
   const [visible, setVisible] = useState(false);
+  const compRef = useRef<Template | null>(null);
 
   useEffect(() => {
     const target = template.find((el) => el.type === 'text')!;
@@ -16,14 +17,25 @@ export default function IndexPage() {
     setFormData([target]);
   }, []);
 
-  function onClose() {}
+  function onClose() {
+    setVisible(false);
+  }
+  function onFocus(item: Template, idx: number) {
+    setVisible(true);
+    compRef.current = item;
+  }
+  function onDel(idx: number) {
+    formData.splice(idx, 1);
+    setFormData([...formData]);
+  }
 
+  const CP = compRef.current ? tempMap[compRef.current!.type]!.component : null;
   return (
     <>
       <Layout>
         <div className={styles.wrapper}>
           <div className={styles.title}>基本信息</div>
-          <Base formData={formData}></Base>
+          <Base formData={formData} onFocus={onFocus} onDel={onDel}></Base>
         </div>
       </Layout>
       <Drawer
@@ -31,7 +43,13 @@ export default function IndexPage() {
         placement="right"
         visible={visible}
         onClose={onClose}
-      ></Drawer>
+      >
+        {CP && (
+          <ItemBox label={compRef.current!.label} isSetting>
+            <CP {...compRef.current} onFocus={onFocus}></CP>
+          </ItemBox>
+        )}
+      </Drawer>
     </>
   );
 }
