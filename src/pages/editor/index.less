@@ -15,17 +15,54 @@
 .template__wrapper {
   display: flex;
   align-items: center;
+  margin-bottom: 10px;
   .label {
     display: flex;
     justify-content: center;
     flex-shrink: 0;
     margin-right: 10px;
   }
-  .setting__wrapper {
+  .setting {
     display: flex;
+    align-items: center;
+    height: 100%;
     & > * {
       margin-left: 10px;
       cursor: pointer;
     }
+  }
+}
+
+.setting__wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  margin-top: -10px;
+  height: 100%;
+  position: relative;
+  padding-bottom: 20px;
+  box-sizing: border-box;
+  .title {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+  .item {
+    color: rgb(145, 145, 145);
+  }
+  .button {
+    margin-top: 10px;
+    width: 80px;
+  }
+  .delete {
+    position: absolute;
+    left: 50%;
+    bottom: 10px;
+    transform: translateX(-50%);
+    font-size: 20px;
+    border: 1px solid rgb(138, 138, 138);
+    color: rgb(138, 138, 138);
+    padding: 10px;
+    border-radius: 50%;
+    cursor: pointer;
   }
 }

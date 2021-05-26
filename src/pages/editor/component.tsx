@@ -8,6 +8,7 @@ export interface Template {
   id?: string;
   type: Type;
   label: string;
+  labelWidth: number;
   placeholder?: string;
   options?: { label: string; value: Value }[];
   value: Value | Value[];
@@ -25,12 +26,14 @@ const template: Template[] = [
   {
     type: 'text',
     label: '文本框',
+    labelWidth: 60,
     placeholder: '请输入内容',
     value: '',
   },
   {
     type: 'radio',
     label: '单选框',
+    labelWidth: 60,
     options: [
       { label: '男', value: 0 },
       { label: '女', value: 1 },
@@ -40,6 +43,7 @@ const template: Template[] = [
   {
     type: 'checkbox',
     label: '多选框',
+    labelWidth: 60,
     options: [
       { label: '0-18 岁', value: 0 },
       { label: '18-28 岁', value: 1 },
@@ -49,12 +53,14 @@ const template: Template[] = [
   {
     type: 'textarea',
     label: '多行文本',
+    labelWidth: 60,
     placeholder: '请输入内容',
     value: '',
   },
   {
     type: 'select',
     label: '选择框',
+    labelWidth: 60,
     placeholder: '请选择',
     mode: 'multiple',
     options: [

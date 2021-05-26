@@ -19,18 +19,22 @@ export const ItemBox = (props: {
   label: string;
   children: ReactNode;
   isSetting?: boolean;
+  labelWidth?: number;
   onSetting?: (event: React.MouseEvent<HTMLDivElement>) => void;
   onDel?: (event?: React.MouseEvent<HTMLElement>) => void;
 }) => (
-  <div className={styles.template__wrapper}>
-    <span className={styles.label}>{props.label}:</span>
+  <div className={styles.template__wrapper} onClick={props.onSetting}>
+    <span className={styles.label} style={{ width: props.labelWidth }}>
+      {props.label}:
+    </span>
     {props.children}
     {!props.isSetting && (
-      <div className={styles.setting__wrapper}>
-        <EditOutlined onClick={props.onSetting} />
-        <Popconfirm title="是否确认删除" onConfirm={props.onDel}>
-          <DeleteOutlined />
-        </Popconfirm>
+      <div className={styles.setting}>
+        <span onClick={(e) => e.stopPropagation()}>
+          <Popconfirm title="是否确认删除" onConfirm={props.onDel}>
+            <DeleteOutlined />
+          </Popconfirm>
+        </span>
       </div>
     )}
   </div>
@@ -45,6 +49,7 @@ export default function Base({ formData, onFocus, onDel }: Props) {
           return (
             <ItemBox
               label={item.label}
+              labelWidth={item.labelWidth}
               key={item.type + '_' + idx}
               onSetting={() => onFocus(item, idx)}
               onDel={(e) => {
