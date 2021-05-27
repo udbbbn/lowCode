@@ -1,4 +1,7 @@
 .wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
   width: 600px;
   height: 800px;
   padding: 5px 10px;
@@ -26,9 +29,15 @@
     display: flex;
     align-items: center;
     height: 100%;
+    visibility: hidden;
     & > * {
       margin-left: 10px;
       cursor: pointer;
+    }
+  }
+  &:hover {
+    .setting {
+      visibility: visible;
     }
   }
 }
@@ -64,5 +73,28 @@
     padding: 10px;
     border-radius: 50%;
     cursor: pointer;
+  }
+  .radio {
+    :global {
+      .ant-checkbox-wrapper + .ant-checkbox-wrapper {
+        margin-left: 0;
+      }
+    }
+  }
+}
+
+.base__wrapper {
+  flex: 1;
+  .base__btn {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    height: 50px;
+    padding: 0 10px;
+    border-top: 1px solid #eee;
   }
 }
