@@ -5,7 +5,7 @@ import {
   MinusCircleOutlined,
   PlusCircleOutlined,
 } from '@ant-design/icons';
-import React, { MouseEvent, ReactNode } from 'react';
+import React, { CSSProperties, MouseEvent, ReactNode } from 'react';
 import { Type, tempMap, Template } from './component';
 import styles from './index.less';
 
@@ -27,11 +27,12 @@ export const ItemBox = (props: {
   children: ReactNode;
   isSetting?: boolean;
   labelWidth?: number;
+  wrapStyle?: CSSProperties;
   onSetting?: (event: React.MouseEvent<HTMLDivElement>) => void;
   onDel?: (event?: React.MouseEvent<HTMLElement>) => void;
   onAdd?: () => void;
 }) => (
-  <div className={styles.template__wrapper}>
+  <div className={styles.template__wrapper} style={{ ...props.wrapStyle }}>
     <span className={styles.label} style={{ width: props.labelWidth }}>
       {props.label}:
     </span>

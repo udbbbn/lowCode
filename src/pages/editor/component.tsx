@@ -35,20 +35,20 @@ const template: Template[] = [
     label: '单选框',
     labelWidth: 60,
     options: [
-      { label: '男', value: 0 },
-      { label: '女', value: 1 },
+      { label: '男', value: '0' },
+      { label: '女', value: '1' },
     ],
-    value: 0,
+    value: '0',
   },
   {
     type: 'checkbox',
     label: '多选框',
     labelWidth: 60,
     options: [
-      { label: '0-18 岁', value: 0 },
-      { label: '18-28 岁', value: 1 },
+      { label: '0-18 岁', value: '0' },
+      { label: '18-28 岁', value: '1' },
     ],
-    value: [0, 1],
+    value: ['0', '1'],
   },
   {
     type: 'textarea',
@@ -64,8 +64,8 @@ const template: Template[] = [
     placeholder: '请选择',
     mode: 'multiple',
     options: [
-      { label: '中国', value: 0 },
-      { label: '美国', value: 1 },
+      { label: '中国', value: '0' },
+      { label: '美国', value: '1' },
     ],
     value: [],
   },
