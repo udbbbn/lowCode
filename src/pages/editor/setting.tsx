@@ -1,13 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Fragment } from 'react';
 import { Input, Button, Popconfirm, Radio } from 'antd';
 import { RadioChangeEvent } from 'antd/lib/radio';
+import produce from 'immer';
+import cloneDeep from 'lodash.clonedeep';
 import { Template, template, tempMap } from './component';
 import {
   DeleteOutlined,
   MinusCircleOutlined,
   PlusCircleOutlined,
 } from '@ant-design/icons';
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidV4 } from 'uuid';
 import { ItemBox } from './base';
 import styles from './index.less';
 
@@ -43,6 +45,7 @@ export default function Setting(props: Props) {
   const [idx, setIdx] = useState(0);
 
   useEffect(() => {
+    // comp.options 是引用类型 需要 immutable 或者 deepCopy
     comp && setAttr({ ...comp });
   }, [comp]);
 
@@ -62,14 +65,19 @@ export default function Setting(props: Props) {
   ) {
     if (attr.options) {
       const idx = attr.options.findIndex((el) => el.value === value);
+      const options = cloneDeep(attr.options);
       if (type === 'change') {
-        attr.options[idx].label = label;
+        options[idx].label = label;
       } else if (type === 'del') {
-        attr.options.splice(idx, 1);
+        options.splice(idx, 1);
       } else {
-        attr.options.splice(idx + 1, 0, { label, value: uuidv4() });
+        options.splice(idx + 1, 0, { label, value: uuidV4() });
       }
-      setAttr({ ...attr });
+      setAttr(
+        produce((draft) => {
+          draft.options = options;
+        }),
+      );
     }
   }
 
@@ -105,6 +113,16 @@ export default function Setting(props: Props) {
                       options={attr.options as Template['options']}
                       onOptionChange={onOptionChange}
                     ></OptionSetting>
+                  ) : attr.type === 'radio' && key === 'value' ? (
+                    <Radio.Group defaultValue={attr.value}>
+                      {attr.options?.map((el) => (
+                        <Fragment key={el.value}>
+                          {el.label && el.label !== '' && (
+                            <Radio value={el.value}>{el.label}</Radio>
+                          )}
+                        </Fragment>
+                      ))}
+                    </Radio.Group>
                   ) : key === 'mode' ? null : (
                     <Input
                       disabled={key === 'type'}
