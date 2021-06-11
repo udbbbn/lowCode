@@ -69,6 +69,7 @@ export default function IndexPage() {
     onClose();
   }
 
+  // 组件设置同步更新到页面
   function onSettingUpdate(item: Template) {
     const { id } = item;
     let idx = formData.findIndex((el) => el.id === id);

@@ -55,16 +55,19 @@ export default function Setting(props: Props) {
     });
   }
 
+  // 选择需要添加的组件
   function onRadioChange({ target: { value } }: RadioChangeEvent) {
     setIdx(value);
   }
 
+  // 默认值选项的 change
   function onDefaultRadioChange({ target: { value } }: RadioChangeEvent) {
     setAttr((draft) => {
       draft.value = value;
     });
   }
 
+  // option 选项的设置以及添加删除
   function onOptionChange(
     type: OptionChangeType,
     label: string,
@@ -84,17 +87,18 @@ export default function Setting(props: Props) {
     }
   }
 
+  // 添加新组件
+  function onAddNewComp() {
+    setIdx(0);
+    onAdd(idx);
+  }
+
   function onSave() {
     onUpdate(
       produce(attr, (draft) => {
         draft.labelWidth = Number(attr.labelWidth);
       }) as Template,
     );
-  }
-
-  function onRadioSave() {
-    setIdx(0);
-    onAdd(idx);
   }
 
   return (
@@ -177,7 +181,7 @@ export default function Setting(props: Props) {
 
           <Button
             type="primary"
-            onClick={onRadioSave}
+            onClick={onAddNewComp}
             className={styles.button}
           >
             添加
