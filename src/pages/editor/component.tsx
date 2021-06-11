@@ -19,7 +19,7 @@ type Value = string | number;
 type DefaultValue = HTMLAttributes<unknown>['defaultValue'];
 
 interface TempProps extends Template {
-  onFocus: (item: FormData, idx: number) => void;
+  onChange: (value: string) => void;
 }
 
 const template: Template[] = [
@@ -77,16 +77,17 @@ const tempMap: {
   };
 } = {
   text: {
-    component: ({ placeholder, value }: TempProps) => (
+    component: ({ placeholder, value, onChange }: TempProps) => (
       <Input
         placeholder={placeholder}
-        defaultValue={value as DefaultValue}
+        value={value as DefaultValue}
+        onChange={({ target: { value } }) => onChange(value)}
       ></Input>
     ),
   },
   radio: {
     component: ({ value, options }: TempProps) => (
-      <Radio.Group defaultValue={value}>
+      <Radio.Group value={value}>
         {options!.map((item) => (
           <Radio key={item.label} value={item.value}>
             {item.label}

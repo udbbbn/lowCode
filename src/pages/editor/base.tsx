@@ -17,6 +17,7 @@ export type FormData = {
 interface Props {
   formData: Template[];
   onFocus: (item: Template, idx: number) => void;
+  onChange: (value: string, idx: number) => void;
   onDel: (idx: number) => void;
   onAdd: (item: Template, idx: number) => void;
   onAddComp: () => void;
@@ -59,6 +60,7 @@ export const ItemBox = (props: {
 export default function Base({
   formData,
   onFocus,
+  onChange,
   onDel,
   onAdd,
   onAddComp,
@@ -81,7 +83,10 @@ export default function Base({
                 onAdd(item, idx);
               }}
             >
-              <CP {...item} onFocus={onFocus}></CP>
+              <CP
+                {...item}
+                onChange={(value: string) => onChange(value, idx)}
+              ></CP>
             </ItemBox>
           );
         })}

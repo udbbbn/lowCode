@@ -1,6 +1,7 @@
 import { useState, useEffect, Fragment } from 'react';
 import { Input, Button, Popconfirm, Radio } from 'antd';
 import { RadioChangeEvent } from 'antd/lib/radio';
+import { useImmer } from 'use-immer';
 import produce from 'immer';
 import cloneDeep from 'lodash.clonedeep';
 import { Template, template, tempMap } from './component';
@@ -41,21 +42,27 @@ type OptionChangeType = 'change' | 'del' | 'add';
 
 export default function Setting(props: Props) {
   const { comp, type, onUpdate, onDel, onAdd } = props;
-  const [attr, setAttr] = useState<Partial<Template>>({});
+  const [attr, setAttr] = useImmer<Partial<Template>>({});
   const [idx, setIdx] = useState(0);
 
   useEffect(() => {
-    // comp.options 是引用类型 需要 immutable 或者 deepCopy
     comp && setAttr({ ...comp });
   }, [comp]);
 
   function onInputChange(key: Key, value: string) {
-    (attr[key] as ValueOf<KeyToLabel>) = value;
-    setAttr({ ...attr });
+    setAttr((draft) => {
+      (draft[key] as ValueOf<KeyToLabel>) = value;
+    });
   }
 
   function onRadioChange({ target: { value } }: RadioChangeEvent) {
     setIdx(value);
+  }
+
+  function onDefaultRadioChange({ target: { value } }: RadioChangeEvent) {
+    setAttr((draft) => {
+      draft.value = value;
+    });
   }
 
   function onOptionChange(
@@ -65,24 +72,24 @@ export default function Setting(props: Props) {
   ) {
     if (attr.options) {
       const idx = attr.options.findIndex((el) => el.value === value);
-      const options = cloneDeep(attr.options);
-      if (type === 'change') {
-        options[idx].label = label;
-      } else if (type === 'del') {
-        options.splice(idx, 1);
-      } else {
-        options.splice(idx + 1, 0, { label, value: uuidV4() });
-      }
-      setAttr(
-        produce((draft) => {
-          draft.options = options;
-        }),
-      );
+      setAttr((draft) => {
+        if (type === 'change') {
+          draft.options![idx].label = label;
+        } else if (type === 'del') {
+          draft.options!.splice(idx, 1);
+        } else {
+          draft.options!.splice(idx + 1, 0, { label, value: uuidV4() });
+        }
+      });
     }
   }
 
   function onSave() {
-    onUpdate({ ...attr, labelWidth: Number(attr.labelWidth) } as Template);
+    onUpdate(
+      produce(attr, (draft) => {
+        draft.labelWidth = Number(attr.labelWidth);
+      }) as Template,
+    );
   }
 
   function onRadioSave() {
@@ -114,7 +121,10 @@ export default function Setting(props: Props) {
                       onOptionChange={onOptionChange}
                     ></OptionSetting>
                   ) : attr.type === 'radio' && key === 'value' ? (
-                    <Radio.Group defaultValue={attr.value}>
+                    <Radio.Group
+                      defaultValue={attr.value}
+                      onChange={onDefaultRadioChange}
+                    >
                       {attr.options?.map((el) => (
                         <Fragment key={el.value}>
                           {el.label && el.label !== '' && (
