@@ -30,7 +30,13 @@ export default function IndexPage() {
     compRef.current = { item, idx, type: 'compSetting' };
     setVisible(true);
   }
-  function onBaseChange(value: string, idx: number) {}
+
+  // 组件值的监听事件
+  function onBaseChange(value: string, idx: number) {
+    setFormData((draft) => {
+      draft[idx].value = value;
+    });
+  }
 
   // 组件删除处理
   function onDel(idx: number | null) {

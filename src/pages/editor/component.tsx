@@ -1,4 +1,5 @@
 import { SelectProps, Input, Radio, Checkbox, Select } from 'antd';
+import { CheckboxValueType } from 'antd/lib/checkbox/Group';
 import { HTMLAttributes } from 'react';
 
 const { TextArea } = Input;
@@ -11,6 +12,7 @@ export interface Template {
   labelWidth: number;
   placeholder?: string;
   options?: { label: string; value: Value }[];
+  defaultValue: Value | Value[];
   value: Value | Value[];
   mode?: SelectProps<unknown>['mode'];
 }
@@ -19,7 +21,7 @@ type Value = string | number;
 type DefaultValue = HTMLAttributes<unknown>['defaultValue'];
 
 interface TempProps extends Template {
-  onChange: (value: string) => void;
+  onChange: (value: any) => void;
 }
 
 const template: Template[] = [
@@ -28,6 +30,7 @@ const template: Template[] = [
     label: '文本框',
     labelWidth: 60,
     placeholder: '请输入内容',
+    defaultValue: '',
     value: '',
   },
   {
@@ -38,6 +41,7 @@ const template: Template[] = [
       { label: '男', value: '0' },
       { label: '女', value: '1' },
     ],
+    defaultValue: '0',
     value: '0',
   },
   {
@@ -48,13 +52,15 @@ const template: Template[] = [
       { label: '0-18 岁', value: '0' },
       { label: '18-28 岁', value: '1' },
     ],
-    value: ['0', '1'],
+    defaultValue: ['0'],
+    value: ['0'],
   },
   {
     type: 'textarea',
     label: '多行文本',
     labelWidth: 60,
     placeholder: '请输入内容',
+    defaultValue: '',
     value: '',
   },
   {
@@ -67,6 +73,7 @@ const template: Template[] = [
       { label: '中国', value: '0' },
       { label: '美国', value: '1' },
     ],
+    defaultValue: [],
     value: [],
   },
 ];
@@ -86,8 +93,11 @@ const tempMap: {
     ),
   },
   radio: {
-    component: ({ value, options }: TempProps) => (
-      <Radio.Group value={value}>
+    component: ({ value, options, onChange }: TempProps) => (
+      <Radio.Group
+        value={value}
+        onChange={({ target: { value } }) => onChange(value)}
+      >
         {options!.map((item) => (
           <Radio key={item.label} value={item.value}>
             {item.label}
@@ -97,8 +107,11 @@ const tempMap: {
     ),
   },
   checkbox: {
-    component: ({ value, options }: TempProps) => (
-      <Checkbox.Group>
+    component: ({ value, options, onChange }: TempProps) => (
+      <Checkbox.Group
+        value={value as CheckboxValueType[]}
+        onChange={(value) => onChange(value)}
+      >
         {options!.map((item) => (
           <Checkbox
             key={item.label}
@@ -112,16 +125,17 @@ const tempMap: {
     ),
   },
   textarea: {
-    component: ({ value, placeholder }: TempProps) => (
+    component: ({ value, placeholder, onChange }: TempProps) => (
       <TextArea
         placeholder={placeholder}
-        defaultValue={value as Value}
+        value={value as Value}
+        onChange={({ target: { value } }) => onChange(value)}
       ></TextArea>
     ),
   },
   select: {
-    component: ({ value, options, placeholder }: TempProps) => (
-      <Select placeholder={placeholder} defaultValue={value}>
+    component: ({ value, options, placeholder, onChange }: TempProps) => (
+      <Select placeholder={placeholder} value={value} onChange={onChange}>
         {options!.map((item) => (
           <Option key={item.label} value={item.value}>
             {item.label}

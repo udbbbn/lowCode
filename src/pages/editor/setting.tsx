@@ -15,7 +15,7 @@ import { ItemBox } from './base';
 import styles from './index.less';
 
 type KeyToLabel = {
-  [key in keyof Template]: ValueOf<Template>;
+  [key in keyof Omit<Template, 'value'>]: ValueOf<Template>;
 };
 
 const keyToLabel: KeyToLabel = {
@@ -23,7 +23,7 @@ const keyToLabel: KeyToLabel = {
   label: '标签名',
   labelWidth: '标签宽度',
   placeholder: '提示文本',
-  value: '默认值',
+  defaultValue: '默认值',
   options: '可选项',
   mode: '模式',
 };
@@ -63,7 +63,7 @@ export default function Setting(props: Props) {
   // 默认值选项的 change
   function onDefaultRadioChange({ target: { value } }: RadioChangeEvent) {
     setAttr((draft) => {
-      draft.value = value;
+      draft.defaultValue = value;
     });
   }
 
@@ -97,6 +97,7 @@ export default function Setting(props: Props) {
     onUpdate(
       produce(attr, (draft) => {
         draft.labelWidth = Number(attr.labelWidth);
+        draft.value = draft.defaultValue;
       }) as Template,
     );
   }
@@ -124,9 +125,9 @@ export default function Setting(props: Props) {
                       options={attr.options as Template['options']}
                       onOptionChange={onOptionChange}
                     ></OptionSetting>
-                  ) : attr.type === 'radio' && key === 'value' ? (
+                  ) : attr.type === 'radio' && key === 'defaultValue' ? (
                     <Radio.Group
-                      defaultValue={attr.value}
+                      defaultValue={attr.defaultValue}
                       onChange={onDefaultRadioChange}
                     >
                       {attr.options?.map((el) => (
@@ -172,7 +173,7 @@ export default function Setting(props: Props) {
               return (
                 <Radio value={idx} key={item.type + '_' + idx}>
                   <ItemBox label={item.label} labelWidth={60} isSetting>
-                    <CP {...item}></CP>
+                    <CP {...item} onChange={() => {}}></CP>
                   </ItemBox>
                 </Radio>
               );
