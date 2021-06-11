@@ -17,7 +17,7 @@ export interface Template {
   mode?: SelectProps<unknown>['mode'];
 }
 export type Type = 'text' | 'radio' | 'checkbox' | 'textarea' | 'select';
-type Value = string | number;
+export type Value = string | number;
 type DefaultValue = HTMLAttributes<unknown>['defaultValue'];
 
 interface TempProps extends Template {

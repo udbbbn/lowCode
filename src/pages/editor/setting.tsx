@@ -1,10 +1,11 @@
 import { useState, useEffect, Fragment } from 'react';
-import { Input, Button, Popconfirm, Radio } from 'antd';
+import { Input, Button, Popconfirm, Radio, Checkbox } from 'antd';
+import { CheckboxValueType } from 'antd/lib/checkbox/Group';
 import { RadioChangeEvent } from 'antd/lib/radio';
 import { useImmer } from 'use-immer';
 import produce from 'immer';
 import cloneDeep from 'lodash.clonedeep';
-import { Template, template, tempMap } from './component';
+import { Template, template, tempMap, Value } from './component';
 import {
   DeleteOutlined,
   MinusCircleOutlined,
@@ -60,10 +61,17 @@ export default function Setting(props: Props) {
     setIdx(value);
   }
 
-  // 默认值选项的 change
+  // Radio 默认值选项的 change
   function onDefaultRadioChange({ target: { value } }: RadioChangeEvent) {
     setAttr((draft) => {
       draft.defaultValue = value;
+    });
+  }
+
+  // CheckBox 默认值选项的 change
+  function onDefaultCheckBoxChange(value: CheckboxValueType[]) {
+    setAttr((draft) => {
+      draft.defaultValue = value as Value[];
     });
   }
 
@@ -106,6 +114,7 @@ export default function Setting(props: Props) {
     <div className={styles.setting__wrapper}>
       {/* <div className={styles.title}>组件属性</div> */}
 
+      {/* 此处还需要处理 选择框的默认值选项 跟模式 选项 */}
       {type === 'compSetting' && (
         <>
           {(Object.keys(attr) as Key[]).map(
@@ -125,19 +134,42 @@ export default function Setting(props: Props) {
                       options={attr.options as Template['options']}
                       onOptionChange={onOptionChange}
                     ></OptionSetting>
-                  ) : attr.type === 'radio' && key === 'defaultValue' ? (
-                    <Radio.Group
-                      defaultValue={attr.defaultValue}
-                      onChange={onDefaultRadioChange}
-                    >
-                      {attr.options?.map((el) => (
-                        <Fragment key={el.value}>
-                          {el.label && el.label !== '' && (
-                            <Radio value={el.value}>{el.label}</Radio>
-                          )}
-                        </Fragment>
-                      ))}
-                    </Radio.Group>
+                  ) : key === 'defaultValue' ? (
+                    attr.type === 'radio' ? (
+                      <Radio.Group
+                        defaultValue={attr.defaultValue}
+                        onChange={onDefaultRadioChange}
+                      >
+                        {attr.options?.map((el) => (
+                          <Fragment key={el.value}>
+                            {el.label && el.label !== '' && (
+                              <Radio value={el.value}>{el.label}</Radio>
+                            )}
+                          </Fragment>
+                        ))}
+                      </Radio.Group>
+                    ) : attr.type === 'checkbox' ? (
+                      <Checkbox.Group
+                        value={attr.defaultValue as CheckboxValueType[]}
+                        onChange={(value) => onDefaultCheckBoxChange(value)}
+                      >
+                        {attr.options?.map((item) => (
+                          <Fragment key={item.value}>
+                            {item.label && item.label !== '' && (
+                              <Checkbox
+                                key={item.label}
+                                value={item.value}
+                                defaultChecked={(
+                                  attr.value as Value[]
+                                ).includes(item.value)}
+                              >
+                                {item.label}
+                              </Checkbox>
+                            )}
+                          </Fragment>
+                        ))}
+                      </Checkbox.Group>
+                    ) : attr.type === 'select' ? null : null
                   ) : key === 'mode' ? null : (
                     <Input
                       disabled={key === 'type'}
